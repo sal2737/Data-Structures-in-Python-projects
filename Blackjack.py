@@ -5,6 +5,8 @@
 	#Deck should have a shuffle() method, which can be written by importing "random" into Python and and random.shuffle(myList) to shuffle 
 	#a list of Card objects
 import random  
+
+#defines a "deck" of cards, initializes 52 cards and provides structure for dealing and shuffling
 class Deck():
     def __init__(self):
         self.cardList = []
@@ -25,7 +27,7 @@ class Deck():
     def __repr__(self):
         return (self.cardList) #add str for the test case, to print out
 
-#card objects
+#defines card objects, assigns "value"
 class Card(Deck):
     def __init__(self, suit, pip):
         self.suit = suit
@@ -39,19 +41,56 @@ class Card(Deck):
     def __repr__(self):
     	return self.pip + self.suit
 
+#defines a player class for player hands and hand values to be stored
 class Player():
 	def __init__(self):
 		self.hand = []
 		self.handTotal = 0  	
 	def __repr__(self):
-		return self.hand 
-		
+		return str(self.hand)
+
+#initial showing of card for player and dealer		
+def showHands(dealer, person):
+	print("Dealer shows: " + str(dealer.hand[0]))
+	print("You show: " + str(person.hand[0]))
+	print(" ")
+
+#unfinished code -- procedure for a turn. relies on all defined classes
+def playersTurn(deck, person):
+	print("You go first.")
+	print(" ")
+	
+	print("You hold " + str(person.hand) + " for a total of " + str(person.handTotal))
+	#ask the player if they'd like to hit or stay
+	if (person.handTotal == 21):
+		return "You won dude! Sick blackjack."
+	else:
+		if ["AH", "AS", "AC", "AD"] in person.hand:
+			print("Assuming a value of 11 for Ace for right now.")
+		decisionVar = int(input("Type 1 to hit or type 2 to stay: "))
+		while (decisionVar == 1):
+			deck.dealOne(person)
+			if(person.handTotal < 21):
+				print("You hold " + str(person.hand) + " for a total of " + str(person.handTotal))
+				decisionVar = int(input("Type 1 to hit or type 2 to stay: "))
+			elif(person.handTotal > 21):
+				if ["AH", "AS", "AC", "AD"] in person.hand:
+					print("You went over 21! Switching your Ace's 11 to a 1.")
+					person.handTotal -= 10
+				print("You hold " + str(person.hand) + " for a total of " + str(person.handTotal))
+				decisionVar = int(input("Type 1 to hit or type 2 to stay: "))
+				print("Bust!")
+			else:
+				print("21! Well, now it's my turn...")
+				
 def main():
 	
-	#initialize deck of cards
+	#initialize deck of cards and shuffle twice for good measure
 	deckOfCards = Deck()
+	deckOfCards.shuffle()
+	deckOfCards.shuffle()
 	
-	#initialize player and dealer
+	#initialize dealer and player
 	dealer = Player()
 	person = Player()
 	
@@ -60,15 +99,11 @@ def main():
 	deckOfCards.dealOne(dealer)
 	deckOfCards.dealOne(person)
 	deckOfCards.dealOne(dealer)
-	print(str(dealer))
-	print(str(person))
+	
+	#the big reveal
+	showHands(dealer,person)
+	
+	#play begins in earnest
+	playersTurn(deckOfCards, person)
+	
 main()
-#deal 2 cards to each player (dealer/computer and user)
-
-#an ace with any 10-pt card is a blackjack. if both the dealer and player draw blackjack, the tie goes to the dealer.
-
-#player always goes first
-
-#The player can choose to keep his/her hand as it is ("stand" or "stay") or request more cards from the deck ("hit"), one at a time
-#while loop would be good
-#If the dealer's hand is still lower than the player's hand, the dealer draws another card.
